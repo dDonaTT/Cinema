@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./banner.css";
 import bgImg from "../images/bg-transformer.jpg";
-import titleImg from "../images/transformer-title.png";
+import MovieContent from "../components/MovieContent";
+import MovieDate from "../components/MovieDate";
+import PlayBtn from "../components/PlayBtn";
+import MovieSwiper from "../components/MovieSwiper";
 
 function Banner() {
   const [movies, setMovies] = useState([]);
@@ -15,49 +18,44 @@ function Banner() {
   useEffect(() => {
     fetchData();
   }, []);
+  const handleSlideChanges = (id) => {
+    const newMovies = movies.map((movie) => {
+      movie.active = false;
+      if (movie._id === id) {
+        movie.active = true;
+      }
+      return movie;
+    });
+    setMovies(newMovies);
+  };
   return (
     <div className="banner">
-      <div className="movie">
-        <img src={bgImg} alt="Background Image" className="bgImg active" />
-        <div className="container-fluid">
-          <div className="row">
-            <div className="col-lg-6 col-md-12">
-              <div className="content active">
-                <img src={titleImg} alt="Movie Title" className="movie-title" />
-                <h4>
-                  <span>Year</span>
-                  <span>
-                    <i>Age</i>
-                  </span>
-                  <span>Length</span>
-                  <span>Category</span>
-                </h4>
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Suscipit repudiandae sunt illo deserunt eveniet in ipsam
-                  excepturi tempora aut odio laboriosam sit ad eum debitis vero,
-                  neque architecto quidem cupiditate amet fugit corporis dolore.
-                  Vel, architecto! Veniam molestiae eos repellendus cum, odio
-                  repudiandae cupiditate nemo. Accusamus obcaecati labore quo
-                  cupiditate.
-                </p>
-                <div className="button">Button</div>
-              </div>
-            </div>
-            <div className="col-lg-6 col-md-12">
-              <div className="date active">
-                <h2>On 15th August</h2>
-              </div>
-              <div className="trailer d-flex align-items-center justify-content-center active">
-                <a href="#" className="playBtn">
-                  <ion-icon name="play-outline"></ion-icon>
-                </a>
-                <p>Watch Trailer</p>
+      {movies &&
+        movies.length > 0 &&
+        movies.map((movie) => (
+          <div className="movie">
+            <img
+              src={movie.bgImg}
+              alt="Background "
+              className={`bgImg ${movie.active ? "active" : undefined}`}
+            />
+            <div className="container-fluid">
+              <div className="row">
+                <div className="col-lg-6 col-md-12">
+                  <MovieContent movie={movie} />
+                </div>
+                <div className="col-lg-6 col-md-12">
+                  <MovieDate movie={movie} />
+                  <PlayBtn movie={movie} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        ))}
+
+      {movies && movies.length > 0 && (
+        <MovieSwiper slides={movies} slideChange={handleSlideChanges} />
+      )}
     </div>
   );
 }
